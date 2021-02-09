@@ -1,0 +1,180 @@
+
+CREATE(l1:Lugar{nombre: 'PARQUE CENTENARIO',drun:0}),
+(l2:Lugar{nombre: 'IGLESIA DIVINO NIÑO',drun:1}),
+(l15:Lugar{nombre: 'LOS PAISAS MANTA',drun:2}),
+(l3:Lugar{nombre: 'PARQUE ALTAGRACIA',drun:4}),
+(l12:Lugar{nombre: 'PASEO SHOPPING MANTA',drun:2}),
+(l4:Lugar{nombre: 'ESTADIO ELEGOLE',drun:2}),
+(l7:Lugar{nombre: 'PARQUE LAS ORQUIDEAS',drun:5}),
+(l13:Lugar{nombre: 'ESTADIO JOCAY',drun:2}),
+(l11:Lugar{nombre: 'IGLESIA CATOLICA NUESTRA MADRE DE LA PAZ',drun:2}),
+(l5:Lugar{nombre: 'PARQUE TOHALLI',drun:2}),
+(l6:Lugar{nombre: 'CENTRO DE SALUD LOS ESTEROS',drun:4}),
+(l8:Lugar{nombre: 'PARQUE LA PRADERA 2',drun:2}),
+(l9:Lugar{nombre: 'PARQUE LA PRADERA',drun:6}),
+(l10:Lugar{nombre: 'PARQUE JOCAY',drun:3}),
+(l14:Lugar{nombre: 'PARQUE AQUILES PAZ',drun:5}),
+(l17:Lugar{nombre: 'PARQUE ALTAMIRA',drun:2}),
+(l16:Lugar{nombre: 'GASOLINERA PRIMAX',drun:4}),
+(l18:Lugar{nombre: 'IESS MANTA',drun:1}),
+(l19:Lugar{nombre: 'PARQUE LAS JACUATAS',drun:3}),
+(l20:Lugar{nombre: 'MONUMENTO A LA TEJEDORA MANABITA',drun:7}),
+(l21:Lugar{nombre: 'CHOPPI CENTO COMERCIAL',drun:9}),
+(l23:Lugar{nombre: 'CENTRO DE EVENTOS Y RECREACION QUERALT',drun:2}),
+(l25:Lugar{nombre: 'LOVING HOTEL DEL AMOR',drun:4}),
+(l24:Lugar{nombre: 'IGLESIA DE LA LEONIDAS PROAÑO',drun:3}),
+(l22:Lugar{nombre: 'PLAZA CIVICA CATONAL MANTA',drun:6}),
+(l26:Lugar{nombre: 'PARQUE DE LA ARMADA',drun:3}),
+(l27:Lugar{nombre: 'PARQUE COMERCIAL NUEVO TARQUI',drun:9}),
+(l28:Lugar{nombre: 'MUSEO DEL MAR',drun:7}),
+(l29:Lugar{nombre: 'PARQUE LOS GAVILANEZ',drun:8}),
+(l30:Lugar{nombre: 'EL PARQUESITO',drun:5}),
+(l31:Lugar{nombre: 'HOTEL PERLA SPONDYLUS',drun:6}),
+(l34:Lugar{nombre: 'MALECOM PLAYA MURCIELAGO',drun:8}),
+(l33:Lugar{nombre: 'PLAYA MURCIELAGO',drun:10}),
+(l32:Lugar{nombre: 'ORO VERDE MANTA',drun:13}),
+(l1)-[:Distancia {metros: 350}]->(l2),
+(l1)-[:Distancia {metros: 1200}]->(l12),
+(l1)-[:Distancia {metros: 1200}]->(l3),
+(l3)-[:Distancia {metros: 900}]->(l4),
+(l3)-[:Distancia {metros: 800}]->(l7),
+(l4)-[:Distancia {metros: 2200}]->(l5),
+(l5)-[:Distancia {metros: 1000}]->(l6),
+(l5)-[:Distancia {metros: 450}]->(l14),
+(l12)-[:Distancia {metros: 450}]->(l11),
+(l12)-[:Distancia {metros: 650}]->(l13),
+(l13)-[:Distancia {metros: 900}]->(l14),
+(l13)-[:Distancia {metros: 1900}]->(l10),
+(l7)-[:Distancia {metros: 1300}]->(l9),
+(l7)-[:Distancia {metros: 1600}]->(l8),
+(l10)-[:Distancia {metros: 4600}]->(l9),
+(l10)-[:Distancia {metros: 1300}]->(l27),
+(l2)-[:Distancia {metros: 750}]->(l15),
+(l2)-[:Distancia {metros: 150}]->(l17),
+(l17)-[:Distancia {metros: 1900}]->(l18),
+(l15)-[:Distancia {metros: 1000}]->(l16),
+(l18)-[:Distancia {metros: 2300}]->(l23),
+(l18)-[:Distancia {metros: 1800}]->(l19),
+(l19)-[:Distancia {metros: 2700}]->(l20),
+(l19)-[:Distancia {metros: 7100}]->(l26),
+(l23)-[:Distancia {metros: 2000}]->(l24),
+(l24)-[:Distancia {metros: 2500}]->(l25),
+(l25)-[:Distancia {metros: 2400}]->(l21),
+(l26)-[:Distancia {metros: 1300}]->(l22),
+(l27)-[:Distancia {metros: 2000}]->(l26),
+(l22)-[:Distancia {metros: 600}]->(l31),
+(l27)-[:Distancia {metros: 2800}]->(l30),
+(l30)-[:Distancia {metros: 3400}]->(l29),
+(l27)-[:Distancia {metros: 1600}]->(l28),
+(l28)-[:Distancia {metros: 2400}]->(l31),
+(l31)-[:Distancia {metros: 1200}]->(l34),
+(l34)-[:Distancia {metros: 300}]->(l33),
+(l33)-[:Distancia {metros: 1300}]->(l32)
+
+
+
+MONUMENTO A LA TEJEDORA MANABITA
+
+nodo inicial
+PARQUE CENTENARIO
+
+NODO FINAL
+MONUMENTO A LA TEJEDORA MANABITA
+
+
+CALL gds.graph.create('Manta', 'Lugar', 'Distancia', { relationshipProperties: 'metros' })
+
+MATCH (a:Lugar{nombre:'PARQUE CENTENARIO'}), (d:Lugar{nombre:'MONUMENTO A LA TEJEDORA MANABITA'})
+WITH id(a) AS nodoInicio, [id(d)] AS nodoFin
+CALL gds.alpha.bfs.stream('Manta', {startNode: nodoInicio, targetNodes: nodoFin,
+maxDepth: 1})
+YIELD path
+UNWIND [ n in nodes (path) | n.nombre ] AS tags
+RETURN tags
+
+
+
+
+busque por costo uniforme
+
+MATCH (start:Lugar {nombre: 'PARQUE CENTENARIO'}), (end:Lugar {nombre:'MONUMENTO A LA TEJEDORA MANABITA'})
+CALL gds.alpha.shortestPath.stream({
+ nodeProjection: 'Lugar',
+ relationshipProjection: {
+ Distancia: {
+ type: 'Distancia',
+ properties: 'metros',
+ orientation: 'UNDIRECTED'
+ }
+ },
+ startNode: start,
+ endNode: end,
+ relationshipWeightProperty: 'metros'
+})
+YIELD nodeId, cost
+RETURN gds.util.asNode(nodeId).nombre AS name, cost
+
+BUSQUEDA POR PROFUNDIDAD
+
+MATCH (a:Lugar{nombre:'PARQUE CENTENARIO'}), (d:Lugar{nombre:'MONUMENTO A LA TEJEDORA MANABITA'})
+WITH id(a) AS nodoInicio, [id(d)] AS nodoFin
+CALL gds.alpha.bfs.stream('Portoviejo', {startNode: nodoInicio, targetNodes: nodoFin,
+maxDepth: 1})
+YIELD path
+UNWIND [ n in nodes (path) | n.nombre ] AS tags
+RETURN tags
+
+
+
+A*
+
+MATCH (start:Lugar {nombre: 'PARQUE CENTENARIO'}), (end:Lugar {nombre: 'MONUMENTO A LA TEJEDORA MANABITA'})
+CALL gds.alpha.shortestPath.astar.stream({
+nodeQuery:'MATCH(p:Lugar) return id(p) AS id',
+relationshipQuery:'MATCH(p1:Lugar)-[r:Distancia]->(p2:Lugar) RETURN id(p1)AS
+source,id(p2) AS target,r.metros AS weight',
+startNode:start,
+endNode:end,
+relationshipWeightProperty:'weight',
+propertyKeyLat:'',
+propertyKeyLat:'',
+})
+YIELD nodeId, cost
+RETURN gds.util.asNode(nodeId).name AS station,cost
+
+A*
+
+MATCH (start:Lugar {nombre:'PARQUE CENTENARIO'}), (end:Lugar {nombre:'MONUMENTO A LA TEJEDORA MANABITA'})
+CALL gds.alpha.shortestPath.astar.stream({
+nodeProjection: {
+Lugar: {
+properties: ['drun']
+}
+},
+relationshipProjection: {
+Distancia: {
+type: 'Distancia',
+orientation: 'UNDIRECTED',
+properties: 'metros'
+}
+},
+startNode: start,
+endNode: end,
+propertyKeyLat: 'drun',
+propertyKeyLon: 'drun'
+})
+YIELD nodeId, cost
+RETURN gds.util.asNode(nodeId).nombre AS station, cost
+
+
+
+
+
+
+
+
+
+
+
+
+
